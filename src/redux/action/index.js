@@ -24,20 +24,19 @@ export const submitLoginForm = (email,password) => async(dispatch) => {
             password,
         });
 
-        if(response.status==200){
-            dispatch({
-                type: "LOGIN_SUCCESS",
-                payload: response.data, // Assuming API returns user data
-            });
-        }
+        dispatch({
+            type: "LOGIN_SUCCESS",
+            payload: response.data, // Assuming API returns user data
+        });
 
-        return(response.data.message);
-
+        return([response.data.message,response.status]);
     } catch (error) {
         dispatch({
             type: "LOGIN_FAILURE",
-            payload: email, // Assuming API returns user data
+            payload: error.response.data, // Assuming API returns user data
         });
+
+        return([error.response.data.message,error.response.status]);
     }
 
 }

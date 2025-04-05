@@ -9,7 +9,7 @@ const authReducer = (state = initialState, action) => {
         case "LOGIN_SUCCESS":
             return{
                 ...state,
-                email: action,
+                email: action.payload.email,
                 isAuthenticated: true,
             };
 
