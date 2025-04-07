@@ -21,7 +21,9 @@ export const submitLoginForm = (email,password) => async(dispatch) => {
     try {
         const response = await axios.post("http://localhost:5000/api/auth/login", {
             email,
-            password,
+            password
+        }, {
+            withCredentials: true
         });
 
         dispatch({
@@ -39,4 +41,25 @@ export const submitLoginForm = (email,password) => async(dispatch) => {
         return([error.response.data.message,error.response.status]);
     }
 
+}
+
+
+export const logoutForm = () => async(dispatch) =>{
+    try {
+        const response = await axios.post("http://localhost:5000/api/auth/logout",{},{
+            withCredentials:true
+        });
+
+        dispatch({
+            type: "LOGIN_FAILURE",
+            payload: response.data, // Assuming API returns user data
+        });
+
+        return([response.data.message,response.status]);
+    } catch (error) {
+        dispatch({
+            type: "LOGIN_FAILURE",
+            payload: error.response.data, // Assuming API returns user data
+        });
+    }
 }

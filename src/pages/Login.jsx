@@ -14,20 +14,18 @@ const Login = () => {
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  const authState = useSelector((state) => state.auth);
+  // const authState = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
-  console.log(authState);
+  useEffect(() => {
+    if(isAuthenticated){
 
-  // useEffect(() => {
-  //   if(isAuthenticated){
-
-  //     navigate("/");
-  //   }
-  // },[isAuthenticated]);
+      navigate("/");
+    }
+  },[isAuthenticated]);
 
 
   const hashSHA256 = async (input) => {
