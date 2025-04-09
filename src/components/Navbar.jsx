@@ -39,7 +39,7 @@ const Navbar = () => {
 
         const checkAuth = async () =>{
             try {
-                const res = await axios.get("http://localhost:5000/api/auth/check", {
+                const res = await axios.get("http://localhost/laravel-backend/api/auth/check", {
                     withCredentials:true
                 });
 
