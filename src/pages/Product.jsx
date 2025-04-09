@@ -29,10 +29,10 @@ const Product = () => {
       setProduct(data.productInfo);
       setLoading(false);
       const response2 = await fetch(
-        `https://fakestoreapi.com/products/category/${data.category}`
+        `http://localhost/laravel-backend/api/products/category/${data.productInfo.category_id}`
       );
       const data2 = await response2.json();
-      setSimilarProducts(data2);
+      setSimilarProducts(data2.productInfoCategory);
       setLoading2(false);
     };
     getProduct();
