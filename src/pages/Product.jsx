@@ -24,9 +24,9 @@ const Product = () => {
     const getProduct = async () => {
       setLoading(true);
       setLoading2(true);
-      const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+      const response = await fetch(`http://localhost/laravel-backend/api/products/${id}`);
       const data = await response.json();
-      setProduct(data);
+      setProduct(data.productInfo);
       setLoading(false);
       const response2 = await fetch(
         `https://fakestoreapi.com/products/category/${data.category}`
@@ -79,7 +79,7 @@ const Product = () => {
               <h4 className="text-uppercase text-muted">{product.category}</h4>
               <h1 className="display-5">{product.title}</h1>
               <p className="lead">
-                {product.rating && product.rating.rate}{" "}
+                {product.rate && product.rate}{" "}
                 <i className="fa fa-star"></i>
               </p>
               <h3 className="display-6  my-4">${product.price}</h3>
