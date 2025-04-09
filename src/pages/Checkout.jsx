@@ -147,7 +147,7 @@ const Checkout = () => {
                         />
                       </div>
 
-                      <div className="col-md-5 my-1">
+                      {/* <div className="col-md-5 my-1">
                         <label for="country" className="form-label">
                           Country
                         </label>
@@ -159,10 +159,10 @@ const Checkout = () => {
                         <div className="invalid-feedback">
                           Please select a valid country.
                         </div>
-                      </div>
+                      </div> */}
 
-                      <div className="col-md-4 my-1">
-                        <label for="state" className="form-label">
+                      <div className="col-md-6 my-1">
+                        <label htmlFor="state" className="form-label">
                           State
                         </label>
                         <br />
@@ -175,8 +175,8 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      <div className="col-md-3 my-1">
-                        <label for="zip" className="form-label">
+                      <div className="col-md-6 my-1">
+                        <label htmlFor="zip" className="form-label">
                           Zip
                         </label>
                         <input
@@ -192,9 +192,9 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    <hr className="my-4" />
+                    {/* <hr className="my-4" /> */}
 
-                    <h4 className="mb-3">Payment</h4>
+                    {/* <h4 className="mb-3">Payment</h4>
 
                     <div className="row gy-3">
                       <div className="col-md-6">
@@ -263,7 +263,7 @@ const Checkout = () => {
                           Security code required
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <hr className="my-4" />
 

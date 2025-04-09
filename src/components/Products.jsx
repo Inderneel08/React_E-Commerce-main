@@ -12,6 +12,7 @@ const Products = () => {
   // const [data, setData] = useState([]);
   const [filter, setFilter] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [categories,setCategories] = useState([]);
 
   let componentMounted = true;
 
@@ -37,12 +38,33 @@ const Products = () => {
       };
     };
 
+    const getCategories = async () => {
+      setLoading(true);
+
+      const response = await fetch("http://localhost/laravel-backend/api/getAll/categories");
+
+      if (componentMounted) {
+        const result = await response.json();  // Parse the response once
+        setCategories(result.categories);
+        setLoading(false);
+      }
+
+      return () => {
+        componentMounted = false;
+      };
+    }
+
     getProducts();
+
+    getCategories();
+
   }, []);
 
   const fetchAllProducts = async () =>{
     setLoading(true);
+
     const response = await fetch("http://localhost/laravel-backend/api/products");
+
     if (componentMounted) {
       const result = await response.json();  // Parse the response once
       // setData(result.products);
@@ -57,9 +79,9 @@ const Products = () => {
 
     const data2 = await response2.json();
 
-    setFilter(data2.products);
+    setFilter(data2.productInfoCategory);
   }
-  
+
 
   const Loading = () => {
     return (
@@ -98,6 +120,26 @@ const Products = () => {
     return (
       <>
         <div className="buttons text-center py-5">
+          {categories.map(category => {
+            if(category.category_name === "all"){
+              return(
+                <button key={category.id}  className="btn btn-outline-dark btn-sm m-2" onClick={fetchAllProducts} >
+                  { category.title_name }
+                </button>
+              );
+            }
+            else{
+              return(
+                <button key={category.id}  className="btn btn-outline-dark btn-sm m-2" onClick={fetchProductsOnCategory(category.id)} >
+                  { category.title_name }
+                </button>
+              );
+            }
+          })}
+        </div>
+
+
+        {/* <div className="buttons text-center py-5">
           <button
             className="btn btn-outline-dark btn-sm m-2"
             onClick={() => fetchAllProducts()}
@@ -128,7 +170,7 @@ const Products = () => {
           >
             Electronics
           </button>
-        </div>
+        </div> */}
 
         {filter.map((product) => {
           return (
