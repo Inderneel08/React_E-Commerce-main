@@ -23,10 +23,11 @@ const Products = () => {
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
-      const response = await fetch("https://fakestoreapi.com/products/");
+      const response = await fetch("http://localhost/laravel-backend/api/products");
       if (componentMounted) {
-        setData(await response.clone().json());
-        setFilter(await response.json());
+        const result = await response.json();  // Parse the response once
+        setData(result.products);
+        setFilter(result.products);
         setLoading(false);
       }
 
