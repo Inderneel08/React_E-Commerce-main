@@ -49,7 +49,7 @@ const Register = () => {
         const hashedConfirmPassword = await hashSHA256(confirmPassword);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/register',{
+            const response = await axios.post('http://localhost/laravel-backend/api/auth/register',{
                 name,
                 email,
                 password: hashedPassword,
