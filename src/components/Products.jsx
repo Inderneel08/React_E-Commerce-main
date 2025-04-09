@@ -9,9 +9,10 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Products = () => {
-  const [data, setData] = useState([]);
-  const [filter, setFilter] = useState(data);
+  // const [data, setData] = useState([]);
+  const [filter, setFilter] = useState([]);
   const [loading, setLoading] = useState(false);
+
   let componentMounted = true;
 
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const Products = () => {
       const response = await fetch("http://localhost/laravel-backend/api/products");
       if (componentMounted) {
         const result = await response.json();  // Parse the response once
-        setData(result.products);
+        // setData(result.products);
         setFilter(result.products);
         setLoading(false);
       }
@@ -38,6 +39,27 @@ const Products = () => {
 
     getProducts();
   }, []);
+
+  const fetchAllProducts = async () =>{
+    setLoading(true);
+    const response = await fetch("http://localhost/laravel-backend/api/products");
+    if (componentMounted) {
+      const result = await response.json();  // Parse the response once
+      // setData(result.products);
+      setFilter(result.products);
+      setLoading(false);
+    }
+  }
+
+  const fetchProductsOnCategory = (category_id) => async () => {
+    const response2 = await fetch(`http://localhost/laravel-backend/api/products/category/${category_id}`
+    );
+
+    const data2 = await response2.json();
+
+    setFilter(data2.products);
+  }
+  
 
   const Loading = () => {
     return (
@@ -67,10 +89,10 @@ const Products = () => {
     );
   };
 
-  const filterProduct = (cat) => {
-    const updatedList = data.filter((item) => item.category === cat);
-    setFilter(updatedList);
-  };
+  // const filterProduct = (cat) => {
+  //   const updatedList = data.filter((item) => item.category === cat);
+  //   setFilter(updatedList);
+  // };
 
   const ShowProducts = () => {
     return (
@@ -78,7 +100,7 @@ const Products = () => {
         <div className="buttons text-center py-5">
           <button
             className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => setFilter(data)}
+            onClick={() => fetchAllProducts()}
           >
             All
           </button>
