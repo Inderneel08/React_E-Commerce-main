@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Footer, Navbar } from "../components";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 const Checkout = () => {
   const state = useSelector((state) => state.handleCart);
+
+  const [states,setStates] = useState([]);
+
+  const [currentState,setCurrentState] = useState(0);
+
+  const [firstName,setFirstName] = useState('');
+
+  const [lastName,setLastName] = useState('');
+
+  const [email,setEmail] = useState('');
+
+  const [address,setAddress] = useState('');
+
+  const [address2, setAddress2] = useState('');
+
+  const [zip,setZip] = useState('');
 
   const EmptyCart = () => {
     return (
@@ -19,6 +37,21 @@ const Checkout = () => {
       </div>
     );
   };
+
+  const fetchStates = async () => {
+    try {
+      const response = await axios.get("http://localhost/laravel-backend/api/getStates");
+      setStates(response.data.states || []);
+    } catch (error) {
+      console.error("Failed to fetch states:", error);
+      setStates([]);
+    }
+  };
+
+
+  useEffect(()=>{
+    fetchStates();
+  },[]);
 
   const ShowCheckout = () => {
     let subtotal = 0;
@@ -67,10 +100,10 @@ const Checkout = () => {
                   <h4 className="mb-0">Billing address</h4>
                 </div>
                 <div className="card-body">
-                  <form className="needs-validation" novalidate>
+                  <form className="needs-validation" noValidate>
                     <div className="row g-3">
                       <div className="col-sm-6 my-1">
-                        <label for="firstName" className="form-label">
+                        <label htmlFor="firstName" className="form-label">
                           First name
                         </label>
                         <input
@@ -79,6 +112,7 @@ const Checkout = () => {
                           id="firstName"
                           placeholder=""
                           required
+                          onChange={(e) => setFirstName(e.target.value)}
                         />
                         <div className="invalid-feedback">
                           Valid first name is required.
@@ -86,7 +120,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-sm-6 my-1">
-                        <label for="lastName" className="form-label">
+                        <label htmlFor="lastName" className="form-label">
                           Last name
                         </label>
                         <input
@@ -95,6 +129,7 @@ const Checkout = () => {
                           id="lastName"
                           placeholder=""
                           required
+                          onChange={(e) => setLastName(e.target.value)}
                         />
                         <div className="invalid-feedback">
                           Valid last name is required.
@@ -102,7 +137,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-12 my-1">
-                        <label for="email" className="form-label">
+                        <label htmlFor="email" className="form-label">
                           Email
                         </label>
                         <input
@@ -119,7 +154,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-12 my-1">
-                        <label for="address" className="form-label">
+                        <label htmlFor="address" className="form-label">
                           Address
                         </label>
                         <input
@@ -135,7 +170,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-12">
-                        <label for="address2" className="form-label">
+                        <label htmlFor="address2" className="form-label">
                           Address 2{" "}
                           <span className="text-muted">(Optional)</span>
                         </label>
@@ -166,9 +201,15 @@ const Checkout = () => {
                           State
                         </label>
                         <br />
-                        <select className="form-select" id="state" required>
+                        <select className="form-select" id="state" required onChange={(e) => setCurrentState(e.target.value)}>
                           <option value="">Choose...</option>
-                          <option>Punjab</option>
+                            {states.map(state => {
+                              return (
+                                <option key={state.id} value={state.id}>
+                                  {state.state_name}
+                                </option>
+                              );
+                            })}
                         </select>
                         <div className="invalid-feedback">
                           Please provide a valid state.

@@ -19,7 +19,7 @@ export const delCart = (product) =>{
 export const submitLoginForm = (email,password) => async(dispatch) => {
 
     try {
-        const response = await axios.post("http://localhost:5000/api/auth/login", {
+        const response = await axios.post("http://localhost/laravel-backend/api/auth/login", {
             email,
             password
         }, {
@@ -46,7 +46,7 @@ export const submitLoginForm = (email,password) => async(dispatch) => {
 
 export const logoutForm = () => async(dispatch) =>{
     try {
-        const response = await axios.post("http://localhost:5000/api/auth/logout",{},{
+        const response = await axios.post("http://localhost/laravel-backend/api/auth/logout",{},{
             withCredentials:true
         });
 

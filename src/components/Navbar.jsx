@@ -105,7 +105,36 @@ const Navbar = () => {
                             </>
                         ):(
                             <>
-                            <button
+                            <div className="d-flex align-items-center">
+                                <div className="dropdown">
+                                    <button
+                                    className="btn btn-outline-dark dropdown-toggle d-flex align-items-center"
+                                    type="button"
+                                    id="profileDropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    >
+                                    <i className="fa fa-user-circle me-2"></i> Profile
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                    <li>
+                                        <NavLink className="dropdown-item" to="/profile">Profile</NavLink>
+                                    </li>
+                                    <li>
+                                        <hr className="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <button className="dropdown-item text-danger" onClick={logoutProcess}>
+                                        Logout
+                                        </button>
+                                    </li>
+                                    </ul>
+                                </div>
+
+                                <NavLink to="/cart" className="btn btn-outline-dark m-2"><i className="fa fa-cart-shopping mr-1"></i> Cart ({state.length}) </NavLink>
+                            </div>
+
+                            {/* <button
                                 className="btn btn-outline-dark dropdown-toggle m-2 d-flex align-items-center"
                                 type="button"
                                 id="profileDropdown"
@@ -126,7 +155,7 @@ const Navbar = () => {
                                         Logout
                                     </button>
                                 </li>
-                            </ul>
+                            </ul> */}
                             </>
                         )}
 
