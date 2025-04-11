@@ -6,13 +6,14 @@ import { useEffect } from 'react'
 import { logoutForm } from '../redux/action' 
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { clearCart } from '../redux/action'
 
 const Navbar = () => {
     const state = useSelector(state => state.handleCart)
 
     const dispatch = useDispatch();
 
-    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
     const logoutProcess = async (event) => {
         const [message,status] = await dispatch(logoutForm());
@@ -47,6 +48,8 @@ const Navbar = () => {
                     type: "LOGIN_SUCCESS",
                     payload: res.data, // Assuming API returns user data
                 });
+
+                dispatch(clearCart());
             } catch (error) {
                 dispatch({
                     type: "LOGIN_FAILURE",
@@ -97,68 +100,37 @@ const Navbar = () => {
                     </div> */}
 
                     <div className="dropdown d-inline">
-                        {!isAuthenticated?(
-                            <>
-                                <NavLink to="/login" className="btn btn-outline-dark m-2"><i className="fa fa-sign-in-alt mr-1"></i> Login</NavLink>
-                                <NavLink to="/register" className="btn btn-outline-dark m-2"><i className="fa fa-user-plus mr-1"></i> Register</NavLink>
-                                <NavLink to="/cart" className="btn btn-outline-dark m-2"><i className="fa fa-cart-shopping mr-1"></i> Cart ({state.length}) </NavLink>
-                            </>
-                        ):(
-                            <>
-                            <div className="d-flex align-items-center">
-                                <div className="dropdown">
-                                    <button
-                                    className="btn btn-outline-dark dropdown-toggle d-flex align-items-center"
-                                    type="button"
-                                    id="profileDropdown"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                    >
-                                    <i className="fa fa-user-circle me-2"></i> Profile
-                                    </button>
-                                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                    <li>
-                                        <NavLink className="dropdown-item" to="/profile">Profile</NavLink>
-                                    </li>
-                                    <li>
-                                        <hr className="dropdown-divider" />
-                                    </li>
-                                    <li>
-                                        <button className="dropdown-item text-danger" onClick={logoutProcess}>
-                                        Logout
-                                        </button>
-                                    </li>
-                                    </ul>
-                                </div>
-
-                                <NavLink to="/cart" className="btn btn-outline-dark m-2"><i className="fa fa-cart-shopping mr-1"></i> Cart ({state.length}) </NavLink>
-                            </div>
-
-                            {/* <button
-                                className="btn btn-outline-dark dropdown-toggle m-2 d-flex align-items-center"
-                                type="button"
-                                id="profileDropdown"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                <i className="fa fa-user-circle mr-2"></i> Profile
+                        {loading ? (
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                        ) : !isAuthenticated ? (
+                        <>
+                            <NavLink to="/login" className="btn btn-outline-dark m-2">Login</NavLink>
+                            <NavLink to="/register" className="btn btn-outline-dark m-2">Register</NavLink>
+                            <NavLink to="/cart" className="btn btn-outline-dark m-2">
+                            <i className="fa fa-cart-shopping mr-1"></i> Cart ({state.length})
+                            </NavLink>
+                        </>
+                        ) : (
+                        <div className="d-flex align-items-center">
+                            <div className="dropdown">
+                            <button className="btn btn-outline-dark dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                                <i className="fa fa-user-circle me-2"></i> Profile
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><NavLink className="dropdown-item" to="/profile">Profile</NavLink></li>
+                                <li><hr className="dropdown-divider" /></li>
                                 <li>
-                                    <NavLink className="dropdown-item" to="/profile">Profile</NavLink>
+                                <button className="dropdown-item text-danger" onClick={logoutProcess}>Logout</button>
                                 </li>
-                                <li>
-                                    <hr className="dropdown-divider" />
-                                </li>
-                                <li>
-                                    <button className="dropdown-item text-danger" onClick={logoutProcess}>
-                                        Logout
-                                    </button>
-                                </li>
-                            </ul> */}
-                            </>
+                            </ul>
+                            </div>
+                            <NavLink to="/cart" className="btn btn-outline-dark m-2">
+                            <i className="fa fa-cart-shopping mr-1"></i> Cart ({state.length})
+                            </NavLink>
+                        </div>
                         )}
-
                     </div>
                 </div>
 

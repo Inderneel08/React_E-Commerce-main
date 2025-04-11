@@ -1,12 +1,18 @@
 // Keep this part the same
 import React, { useEffect, useState } from "react";
 import { Footer, Navbar } from "../components";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from 'sweetalert2';
+import {load} from '@cashfreepayments/cashfree-js';
+import { clearCart } from "../redux/action";
 
 const Checkout = () => {
+  const dispatch = useDispatch();
+
   const state = useSelector((state) => state.handleCart);
+
   const [states, setStates] = useState([]);
 
   useEffect(() => {
@@ -43,21 +49,91 @@ const Checkout = () => {
     const [address, setAddress] = useState("");
     const [address2, setAddress2] = useState("");
     const [zip, setZip] = useState("");
+    const [phone,setPhone] = useState("");
 
     useEffect(() => {
-      if(firstName!="" && lastName!="" && email!="" && address!="" && address2!="" && zip!=""){
+      if(firstName!="" && lastName!="" && email!="" && address!="" && zip!=""){
         document.getElementById('checkoutSubmit').disabled=false;
       }
 
     },[firstName,lastName,email,address,address2,zip]);
 
-    const [subtotal, totalItems] = React.useMemo(() => {
-      const subtotalCalc = state.reduce((acc, item) => acc + item.price * item.qty, 0);
-      const itemsCount = state.reduce((acc, item) => acc + item.qty, 0);
-      return [subtotalCalc, itemsCount];
-    }, [state]);
+
+    const submitCheckoutForm = async (event) => {
+      try {
+        event.preventDefault();
+
+        const response = await axios.post("http://localhost/laravel-backend/api/auth/createOrder",{
+          firstName,
+          lastName,
+          email,
+          currentState,
+          address,
+          address2,
+          zip,
+          phone,
+          subtotal,
+          state,
+        },{
+          withCredentials: true,
+        });
+
+        const data = response.data.data;
+
+        if(response.status==200){
+          let checkoutOptions = {
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_modal",
+          }
+
+          const cashfree = await load({
+            mode:"sandbox"
+          });
+
+            try {
+              const result = await cashfree.checkout(checkoutOptions);
+
+              if (result.error) {
+                console.log("User has closed the popup or there is some payment error, Check for Payment Status");
+                console.log(result.error);
+              } else if (result.redirect) {
+                console.log("Payment will be redirected");
+              } else if (result.paymentDetails) {
+                console.log("Payment has been completed, Check for Payment Status");
+                console.log(result.paymentDetails.paymentMessage);
+                dispatch(clearCart());
+              }
+          } catch (checkoutError) {
+            console.error("Checkout process failed: ", checkoutError);
+          }
+        }
+        else{
+          Swal.fire({
+            title: 'Error',
+            text:'Error',
+            icon:'error',
+          });
+        }
+
+      } catch (error) {
+        console.log(error);
+
+        Swal.fire({
+          title: 'Error',
+          text:'Error',
+          icon:'error',
+        });
+      }
+    }
 
     const shipping = 30.0;
+
+    const [subtotalCalc,subtotal, totalItems] = React.useMemo(() => {
+      const subtotalCalc = state.reduce((acc, item) => acc + item.price * item.qty, 0);
+      const itemsCount = state.reduce((acc, item) => acc + item.qty, 0);
+      return [subtotalCalc,subtotalCalc+shipping, itemsCount];
+    }, [state]);
+
 
     return (
       <div className="container py-5">
@@ -71,14 +147,14 @@ const Checkout = () => {
               <div className="card-body">
                 <ul className="list-group list-group-flush">
                   <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                    Products ({totalItems})<span>${Math.round(subtotal)}</span>
+                    Products ({totalItems})<span>${Math.round(subtotalCalc)}</span>
                   </li>
                   <li className="list-group-item d-flex justify-content-between align-items-center px-0">
                     Shipping<span>${shipping}</span>
                   </li>
                   <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                     <strong>Total amount</strong>
-                    <span><strong>${Math.round(subtotal + shipping)}</strong></span>
+                    <span><strong>${Math.round(subtotal)}</strong></span>
                   </li>
                 </ul>
               </div>
@@ -92,7 +168,7 @@ const Checkout = () => {
                 <h4 className="mb-0">Billing address</h4>
               </div>
               <div className="card-body">
-                <form className="needs-validation" noValidate>
+                <form className="needs-validation" noValidate onSubmit={submitCheckoutForm}>
                   <div className="row g-3">
                     <div className="col-sm-6 my-1">
                       <label className="form-label">First name</label>
@@ -113,6 +189,17 @@ const Checkout = () => {
                         required
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="col-sm-12 my-1">
+                      <label className="form-label">Phone Number</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
                       />
                     </div>
 

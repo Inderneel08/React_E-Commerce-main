@@ -24,6 +24,10 @@ const handleCart = (state = getInitialCart(), action) => {
       localStorage.setItem("cart", JSON.stringify(updatedCart));
       return updatedCart;
 
+    case "CLEARCART":
+      localStorage.removeItem("cart");
+      return [];
+
     case "DELITEM":
       const exist2 = state.find((x) => x.id === product.id);
       if (exist2.qty === 1) {

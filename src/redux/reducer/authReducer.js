@@ -1,6 +1,7 @@
 const initialState = {
   email: null,
   isAuthenticated: false,
+  loading: true,
 };
 
 
@@ -11,6 +12,7 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 email: action.payload.email,
                 isAuthenticated: true,
+                loading: false,
             };
 
         case "LOGIN_FAILURE":
@@ -18,6 +20,7 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 email: null,
                 isAuthenticated: false,
+                loading: false,
             };
 
         case "TOKEN_EXPIRED":
@@ -25,6 +28,7 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 email: null,
                 isAuthenticated: false,
+                loading: false,
             };
 
         default:

@@ -8,6 +8,12 @@ export const addCart = (product) =>{
     }
 }
 
+export const clearCart = () => {
+    return{
+        type:"CLEARCART",
+    }
+}
+
 // For Delete Item to Cart
 export const delCart = (product) =>{
     return {

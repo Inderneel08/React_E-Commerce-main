@@ -8,7 +8,7 @@ const ProfileData = () => {
 
   const [profileData, setProfileData] = useState({});
 
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated, loading } = useSelector(state => state.auth);
 
   const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ const ProfileData = () => {
   }, []);
 
     useEffect(() => {
-        if(!isAuthenticated){
+        if(!isAuthenticated && !loading){
             navigate("/");
         }
     },[isAuthenticated]);
@@ -49,12 +49,26 @@ const ProfileData = () => {
 
 },[isAuthenticated])
 
+    const updateProfileInfo = async (event) =>{
+        event.preventDefault();
+
+        const response = await axios.post("http://localhost/laravel-backend/api/auth/updateProfile", {
+            profileData
+        },{
+            withCredentials:true
+        });
+
+        const data = response.data;
+
+        console.log(data);
+    }
+
     return (
     <>
         {isAuthenticated && (
         <div className="container py-5">
             <h2 className="mb-4">Profile Information</h2>
-            <form className="row g-3">
+            <form className="row g-3" onSubmit={updateProfileInfo}>
             <div className="col-md-12">
                 <label htmlFor="name" className="form-label">Name</label>
                 <input type="text" className="form-control" id="name" required value={profileData.name || ""} onChange={(e) => setProfileData({ ...profileData, name: e.target.value })} readOnly />
@@ -67,17 +81,17 @@ const ProfileData = () => {
 
             <div className="col-md-6">
                 <label htmlFor="phone" className="form-label">Phone</label>
-                <input type="number" className="form-control" id="phone" value={profileData.phone || ""} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} />
+                <input type="text" className="form-control" id="phone" value={profileData.phone || ""} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} />
             </div>
 
             <div className="col-md-12">
                 <label htmlFor="address" className="form-label">Address</label>
-                <input type="text" className="form-control" id="address" required value={profileData.address || ""} onChange={(e) => setProfileData({ ...profileData, address: e.target.value })} />
+                <input type="text" className="form-control" id="address" value={profileData.address || ""} onChange={(e) => setProfileData({ ...profileData, address: e.target.value })} />
             </div>
 
             <div className="col-md-6">
                 <label htmlFor="state" className="form-label">State</label>
-                <select id="state" className="form-select" required value={profileData.state || ""} onChange={(e) => setProfileData({ ...profileData, state: e.target.value })}>
+                <select id="state" className="form-select" value={profileData.state || ""} onChange={(e) => setProfileData({ ...profileData, state: e.target.value })}>
                 <option value="">Choose...</option>
                 {states.map((state) => (
                     <option key={state.id} value={state.id}>{state.state_name}</option>
@@ -87,7 +101,7 @@ const ProfileData = () => {
 
             <div className="col-md-6">
                 <label htmlFor="zip" className="form-label">Zip</label>
-                <input type="text" className="form-control" id="zip" required value={profileData.zip || ""} onChange={(e) => setProfileData({ ...profileData, zip: e.target.value })} />
+                <input type="text" className="form-control" id="zip" value={profileData.zip || ""} onChange={(e) => setProfileData({ ...profileData, zip: e.target.value })} />
             </div>
 
             <div className="col-12">
