@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const ProfileData = () => {
   const [states, setStates] = useState([]);
@@ -60,7 +61,20 @@ const ProfileData = () => {
 
         const data = response.data;
 
-        console.log(data);
+        if(response.status==200){
+            Swal.fire({
+                title: 'Success',
+                text: data.message,
+                icon: 'success',
+            });
+        }
+        else{
+            Swal.fire({
+                title: 'Error',
+                text: data.message,
+                icon: 'error',
+            });
+        }
     }
 
     return (

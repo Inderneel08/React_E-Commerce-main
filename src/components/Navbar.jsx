@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
@@ -14,6 +14,8 @@ const Navbar = () => {
     const dispatch = useDispatch();
 
     const { isAuthenticated, loading } = useSelector((state) => state.auth);
+
+    const[cartCount,setCartCount] = useState(0);
 
     const logoutProcess = async (event) => {
         const [message,status] = await dispatch(logoutForm());
@@ -57,6 +59,22 @@ const Navbar = () => {
                 });
             }
         }
+
+
+        const getCartInfo = async () =>{
+            try {
+                const response = await axios.get("http://localhost/laravel-backend/api/auth/getCartInfo", {
+                    withCredentials:true
+                });
+
+                setCartCount(response.data.cartCount);
+            } catch (error) {
+                console.error();
+            }
+        }
+
+
+        getCartInfo();
 
         checkAuth();
     },[dispatch]);
@@ -120,6 +138,8 @@ const Navbar = () => {
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                 <li><NavLink className="dropdown-item" to="/profile">Profile</NavLink></li>
+                                <li><hr className="dropdown-divider" /></li>
+                                <li><NavLink className="dropdown-item" to="/changePassword">Change Password</NavLink></li>
                                 <li><hr className="dropdown-divider" /></li>
                                 <li>
                                 <button className="dropdown-item text-danger" onClick={logoutProcess}>Logout</button>

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { addCart } from "../redux/action";
-
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const Products = () => {
   // const [data, setData] = useState([]);
@@ -14,12 +13,31 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   const [categories,setCategories] = useState([]);
 
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   let componentMounted = true;
 
   const dispatch = useDispatch();
 
+  const addToCart = async (product) => {
+    try {
+      const response = await axios.post("http://localhost/laravel-backend/api/auth/addToCart",product,{
+        withCredentials: true
+      })
+
+    } catch (error) {
+      console.error();
+    }
+  }
+
   const addProduct = (product) => {
-    dispatch(addCart(product));
+
+    if(isAuthenticated){
+      addToCart(product);
+    }
+    else{
+      dispatch(addCart(product));
+    }
   };
 
   useEffect(() => {
