@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams,useNavigate } from "react-router-dom";
 import Marquee from "react-fast-marquee";
 import { useDispatch,useSelector } from "react-redux";
 import { addCart } from "../redux/action";
 import { Footer, Navbar } from "../components";
+import axios from "axios";
+import { fetchCartCount } from "../redux/action";
 
 const Product = () => {
   const { id } = useParams();
@@ -13,10 +15,42 @@ const Product = () => {
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
 
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  const addToCart = async (product) => {
+    try {
+      const response = await axios.post("http://localhost/laravel-backend/api/auth/addToCart",product,{
+        withCredentials: true
+      })
+
+      dispatch(fetchCartCount());
+    } catch (error) {
+      console.error();
+    }
+  }
+
+
   const dispatch = useDispatch();
 
+  const navigate = useNavigate();
+
+
   const addProduct = (product) => {
-    dispatch(addCart(product));
+    product.id=product.product_id;
+
+    delete product.product_id;
+
+    if(isAuthenticated){
+
+      // dispatch({
+      //   type:"RESET_CART",
+      // });
+
+      addToCart(product);
+    }
+    else{
+      dispatch(addCart(product));
+    }
   };
 
   useEffect(() => {
@@ -81,7 +115,7 @@ const Product = () => {
                 {product.rate && product.rate}{" "}
                 <i className="fa fa-star"></i>
               </p>
-              <h3 className="display-6  my-4">${product.price}</h3>
+              <h3 className="display-6  my-4">₹{product.price}</h3>
               <p className="lead">{product.description}</p>
               <button
                 className="btn btn-outline-dark"

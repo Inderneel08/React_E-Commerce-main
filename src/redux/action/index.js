@@ -8,6 +8,24 @@ export const addCart = (product) =>{
     }
 }
 
+export const fetchCartCount = () => async (dispatch) => {
+  try {
+    const response = await axios.get("http://localhost/laravel-backend/api/auth/getCartInfo", {
+      withCredentials: true
+    });
+
+    dispatch({
+      type: "UPDATE_CART_COUNT",
+      payload: response.data.cartCount,
+    });
+  } catch (error) {
+    dispatch({
+      type: "UPDATE_CART_COUNT",
+      payload: 0,
+    });
+  }
+};
+
 export const clearCart = () => {
     return{
         type:"CLEARCART",

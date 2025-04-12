@@ -7,6 +7,7 @@ import { logoutForm } from '../redux/action'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { clearCart } from '../redux/action'
+import { fetchCartCount } from '../redux/action';
 
 const Navbar = () => {
     const state = useSelector(state => state.handleCart)
@@ -15,9 +16,9 @@ const Navbar = () => {
 
     const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
-    const[cartCount,setCartCount] = useState(0);
+    const {cartCount,cartLoading} = useSelector(state => state.cartCount);
 
-    const logoutProcess = async (event) => {
+    const logoutProcess = async () => {
         const [message,status] = await dispatch(logoutForm());
 
         if(status==200){
@@ -60,23 +61,29 @@ const Navbar = () => {
             }
         }
 
+        // const getCartInfo = async () =>{
+        //     try {
+        //         const response = await axios.get("http://localhost/laravel-backend/api/auth/getCartInfo", {
+        //             withCredentials:true
+        //         });
 
-        const getCartInfo = async () =>{
-            try {
-                const response = await axios.get("http://localhost/laravel-backend/api/auth/getCartInfo", {
-                    withCredentials:true
-                });
+        //         setCartCount(response.data.cartCount);
 
-                setCartCount(response.data.cartCount);
-            } catch (error) {
-                console.error();
-            }
-        }
+        //         setCartLoading(false);
 
+        //     } catch (error) {
+        //         if(error.response.status==401){
+        //             setCartLoading(false);
+        //         }
 
-        getCartInfo();
+        //         console.error();
+        //     }
+        // }
 
         checkAuth();
+
+        dispatch(fetchCartCount());
+
     },[dispatch]);
 
     return (
@@ -118,7 +125,7 @@ const Navbar = () => {
                     </div> */}
 
                     <div className="dropdown d-inline">
-                        {loading ? (
+                        {(loading || cartLoading) ? (
                         <div className="spinner-border text-primary" role="status">
                             <span className="visually-hidden">Loading...</span>
                         </div>
@@ -127,7 +134,7 @@ const Navbar = () => {
                             <NavLink to="/login" className="btn btn-outline-dark m-2">Login</NavLink>
                             <NavLink to="/register" className="btn btn-outline-dark m-2">Register</NavLink>
                             <NavLink to="/cart" className="btn btn-outline-dark m-2">
-                            <i className="fa fa-cart-shopping mr-1"></i> Cart ({state.length})
+                            <i className="fa fa-cart-shopping mr-1"></i> Cart ({ state.length})
                             </NavLink>
                         </>
                         ) : (
@@ -147,7 +154,7 @@ const Navbar = () => {
                             </ul>
                             </div>
                             <NavLink to="/cart" className="btn btn-outline-dark m-2">
-                            <i className="fa fa-cart-shopping mr-1"></i> Cart ({state.length})
+                            <i className="fa fa-cart-shopping mr-1"></i> Cart ({cartCount})
                             </NavLink>
                         </div>
                         )}

@@ -6,6 +6,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { fetchCartCount } from "../redux/action";
 
 const Products = () => {
   // const [data, setData] = useState([]);
@@ -25,6 +26,7 @@ const Products = () => {
         withCredentials: true
       })
 
+      dispatch(fetchCartCount());
     } catch (error) {
       console.error();
     }
@@ -213,7 +215,7 @@ const Products = () => {
                   </p>
                 </div>
                 <ul className="list-group list-group-flush">
-                  <li className="list-group-item lead">$ {product.price}</li>
+                  <li className="list-group-item lead">₹ {product.price}</li>
                   {/* <li className="list-group-item">Dapibus ac facilisis in</li>
                     <li className="list-group-item">Vestibulum at eros</li> */}
                 </ul>
