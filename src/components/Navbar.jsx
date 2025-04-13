@@ -61,6 +61,17 @@ const Navbar = () => {
             }
         }
 
+        const processPendingOrders = async () =>{
+            try {
+                const response = await axios.get("http://localhost/laravel-backend/api/processPendingOrders",{
+                    withCredentials: true,
+                });
+
+            } catch (error) {
+                console.error();
+            }
+        }
+
         // const getCartInfo = async () =>{
         //     try {
         //         const response = await axios.get("http://localhost/laravel-backend/api/auth/getCartInfo", {
@@ -81,6 +92,8 @@ const Navbar = () => {
         // }
 
         checkAuth();
+
+        processPendingOrders();
 
         dispatch(fetchCartCount());
 

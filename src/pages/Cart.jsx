@@ -49,12 +49,31 @@ const Cart = () => {
             const result = await cashfree.checkout(checkoutOptions);
 
             if (result.error) {
+              // Swal.fire({
+              //   title:"Error",
+              //   icon:"error",
+              //   text:"Error in processing the payment",
+              //   didClose: () => {
+              //     navigate("/");
+              //   }
+              // });
+
               console.log("User has closed the popup or there is some payment error, Check for Payment Status");
               console.log(result.error);
             } else if (result.redirect) {
               console.log("Payment will be redirected");
             } else if (result.paymentDetails) {
               console.log("Payment has been completed, Check for Payment Status");
+
+              Swal.fire({
+                title:"Success",
+                icon:"success",
+                text:"Payment has been processed",
+                didClose: () => {
+                  navigate("/");
+                }
+              });
+
               console.log(result.paymentDetails.paymentMessage);
             }
         } catch (checkoutError) {
