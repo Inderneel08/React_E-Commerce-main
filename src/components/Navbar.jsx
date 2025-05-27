@@ -14,7 +14,7 @@ const Navbar = () => {
 
     const dispatch = useDispatch();
 
-    const { isAuthenticated, loading } = useSelector((state) => state.auth);
+    const { isAuthenticated, loading, role_user } = useSelector((state) => state.auth);
 
     const {cartCount,cartLoading} = useSelector(state => state.cartCount);
 
@@ -43,7 +43,8 @@ const Navbar = () => {
 
         const checkAuth = async () =>{
             try {
-                const res = await axios.get("http://localhost/laravel-backend/api/auth/check", {
+                // http://localhost/laravel-backend/api/auth/check
+                const res = await axios.get("http://localhost:8080/api/auth/check", {
                     withCredentials:true
                 });
 
@@ -61,16 +62,18 @@ const Navbar = () => {
             }
         }
 
-        const processPendingOrders = async () =>{
-            try {
-                const response = await axios.get("http://localhost/laravel-backend/api/processPendingOrders",{
-                    withCredentials: true,
-                });
+        // const processPendingOrders = async () =>{
+        //     try {
+        //         // http://localhost/laravel-backend/api/processPendingOrders
 
-            } catch (error) {
-                console.error();
-            }
-        }
+        //         const response = await axios.get("http://localhost:8080/api/auth/processPendingOrders",{
+        //             withCredentials: true,
+        //         });
+
+        //     } catch (error) {
+        //         console.error();
+        //     }
+        // }
 
         // const getCartInfo = async () =>{
         //     try {
@@ -93,7 +96,7 @@ const Navbar = () => {
 
         checkAuth();
 
-        processPendingOrders();
+        // processPendingOrders();
 
         dispatch(fetchCartCount());
 
@@ -118,9 +121,14 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/about">About</NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/contact">Contact</NavLink>
-                        </li>
+                        {role_user == 0 ? (
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/contact">Contact</NavLink>
+                            </li>
+                        ):(
+                            null
+                        )}
+
                     </ul>
                     {/* <div className="buttons text-center">
                         {!isAuthenticated?(

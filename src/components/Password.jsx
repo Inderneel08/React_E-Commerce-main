@@ -49,7 +49,8 @@ const Password = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost/laravel-backend/api/auth/updatePassword", hashedPayload, {
+      // http://localhost/laravel-backend/api/auth/updatePassword
+      const response = await axios.post("http://localhost:8080/api/auth/updatePassword", hashedPayload, {
         withCredentials: true
       });
 

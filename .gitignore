@@ -21,3 +21,11 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.firebase
+.dockerignore
+.firebaserc
+Dockerfile
+firebase.json
+inderneel08
+inderneel08.pub
+my-react-app.tar

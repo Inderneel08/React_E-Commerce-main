@@ -18,8 +18,10 @@ const Checkout = () => {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const response = await axios.get("http://localhost/laravel-backend/api/getStates");
-        setStates(response.data.states || []);
+        // http://localhost/laravel-backend/api/getStates
+        const response = await axios.get("http://localhost:8080/api/auth/getStates");
+        setStates(response.data || []);
+        // setStates(response.data.states || []);
       } catch (error) {
         console.error("Failed to fetch states:", error);
         setStates([]);

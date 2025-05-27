@@ -16,8 +16,10 @@ const ProfileData = () => {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const response = await axios.get("http://localhost/laravel-backend/api/getStates");
-        setStates(response.data.states || []);
+        // http://localhost/laravel-backend/api/getStates
+        const response = await axios.get("http://localhost:8080/api/auth/getStates");
+        setStates(response.data || []);
+        // setStates(response.data.states || []);
       } catch (error) {
         console.error("Failed to fetch states:", error);
       }
@@ -36,11 +38,13 @@ const ProfileData = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
-            const response = await axios.get("http://localhost/laravel-backend/api/auth/findProfileInfo", {
+            // http://localhost/laravel-backend/api/auth/findProfileInfo
+            const response = await axios.get("http://localhost:8080/api/auth/findProfileInfo", {
                 withCredentials:true
             });
 
-            setProfileData(response.data.profileInfo || {});
+            setProfileData(response.data || {});
+            // setProfileData(response.data.profileInfo || {});
         } catch (error) {
             console.error("Failed to fetch data", error);
         }

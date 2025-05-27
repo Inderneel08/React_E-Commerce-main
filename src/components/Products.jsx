@@ -22,7 +22,10 @@ const Products = () => {
 
   const addToCart = async (product) => {
     try {
-      const response = await axios.post("http://localhost/laravel-backend/api/auth/addToCart",product,{
+      // http://localhost/laravel-backend/api/auth/addToCart
+      // http://localhost:8080/api/auth/addToCart
+
+      const response = await axios.post("http://localhost:8080/api/auth/addToCartViaProductId",product,{
         withCredentials: true
       })
 
@@ -45,7 +48,10 @@ const Products = () => {
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
-      const response = await fetch("http://localhost/laravel-backend/api/products");
+      // http://localhost/laravel-backend/api/products
+
+      // http://localhost:8080/api/auth/products
+      const response = await fetch("http://localhost:8080/api/auth/products");
       if (componentMounted) {
         const result = await response.json();  // Parse the response once
         // setData(result.products);
@@ -61,7 +67,9 @@ const Products = () => {
     const getCategories = async () => {
       setLoading(true);
 
-      const response = await fetch("http://localhost/laravel-backend/api/getAll/categories");
+      // http://localhost/laravel-backend/api/getAll/categories
+
+      const response = await fetch("http://localhost:8080/api/auth/getAll/categories");
 
       if (componentMounted) {
         const result = await response.json();  // Parse the response once
@@ -83,7 +91,9 @@ const Products = () => {
   const fetchAllProducts = async () =>{
     setLoading(true);
 
-    const response = await fetch("http://localhost/laravel-backend/api/products");
+    // http://localhost/laravel-backend/api/products
+
+    const response = await fetch("http://localhost:8080/api/auth/products");
 
     if (componentMounted) {
       const result = await response.json();  // Parse the response once
@@ -94,7 +104,9 @@ const Products = () => {
   }
 
   const fetchProductsOnCategory = (category_id) => async () => {
-    const response2 = await fetch(`http://localhost/laravel-backend/api/products/category/${category_id}`
+    console.log(category_id);
+    // http://localhost/laravel-backend/api/products/category/${category_id}
+    const response2 = await fetch(`http://localhost:8080/api/auth/products/category/${category_id}`
     );
 
     const data2 = await response2.json();

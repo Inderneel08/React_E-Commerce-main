@@ -49,7 +49,8 @@ const Register = () => {
         const hashedConfirmPassword = await hashSHA256(confirmPassword);
 
         try {
-            const response = await axios.post('http://localhost/laravel-backend/api/auth/register',{
+            // http://localhost/laravel-backend/api/auth/register
+            const response = await axios.post('http://localhost:8080/api/auth/register',{
                 name,
                 email,
                 password: hashedPassword,
@@ -59,7 +60,8 @@ const Register = () => {
             if(response.status==200){
                 Swal.fire({
                     title: 'Success!',
-                    text: response.data.message,
+                    // text: response.data.message,
+                    text: response.data,
                     icon: 'success',
                 }).then(() => {
                     window.location.reload();
@@ -68,7 +70,8 @@ const Register = () => {
             else{
                 Swal.fire({
                     title:'Error',
-                    text: response.data.message,
+                    // text: response.data.message,
+                    text: response.data,
                     icon:'error',
                 }).then(() => {
                     window.location.reload();
@@ -76,9 +79,15 @@ const Register = () => {
             }
 
         } catch (error) {
-            console.error('Error during registration:', error.response?.data || error.message);
+            // console.error('Error during registration:', error.response?.data || error.message);
 
-            alert('Registration failed. Please try again.');
+            Swal.fire({
+                title:'Error',
+                text:error.response?.data,
+                icon:'error',
+            });
+
+            // alert('Registration failed. Please try again.');
         }
     }
 
