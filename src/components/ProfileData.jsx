@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import api from "../api/axios";
 
 const ProfileData = () => {
   const [states, setStates] = useState([]);
@@ -17,7 +17,8 @@ const ProfileData = () => {
     const fetchStates = async () => {
       try {
         // http://localhost/laravel-backend/api/getStates
-        const response = await axios.get("http://localhost:8080/api/auth/getStates");
+        //   http://localhost:8080/api/auth/getStates
+        const response = await api.get("getStates");
         setStates(response.data || []);
         // setStates(response.data.states || []);
       } catch (error) {
@@ -39,7 +40,8 @@ const ProfileData = () => {
     const fetchProfileData = async () => {
         try {
             // http://localhost/laravel-backend/api/auth/findProfileInfo
-            const response = await axios.get("http://localhost:8080/api/auth/findProfileInfo", {
+            // http://localhost:8080/api/auth/findProfileInfo
+            const response = await api.get("auth/findProfileInfo", {
                 withCredentials:true
             });
 
@@ -56,8 +58,8 @@ const ProfileData = () => {
 
     const updateProfileInfo = async (event) =>{
         event.preventDefault();
-
-        const response = await axios.post("http://localhost/laravel-backend/api/auth/updateProfile", {
+        // http://localhost/laravel-backend/api/auth/updateProfile
+        const response = await api.post("updateProfile", {
             profileData
         },{
             withCredentials:true

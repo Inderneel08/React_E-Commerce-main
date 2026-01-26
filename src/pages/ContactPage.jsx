@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import axios from "axios";
 import { useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom"; // import useNavigate
+import api from "../api/axios";
 const ContactPage = () => {
 
   const [name,setName] = useState("");
@@ -26,8 +27,8 @@ const ContactPage = () => {
   const submitCheckoutForm = async(event) =>{
     try {
       event.preventDefault();
-
-      const response = await axios.post("http://localhost:8080/api/auth/createQuery",{
+      // http://localhost:8080/api/auth/createQuery
+      const response = await api.post("createQuery",{
         name,
         email,
         message
@@ -40,6 +41,8 @@ const ContactPage = () => {
           title:'Success',
           text:response.data,
           icon:'success',
+        }).then(() => {
+          window.location.reload();
         });
       }
     } catch (error) {

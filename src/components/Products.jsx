@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "../redux/action";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { fetchCartCount } from "../redux/action";
+import api from "../api/axios";
 
 const Products = () => {
   // const [data, setData] = useState([]);
   const [filter, setFilter] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [categories,setCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -24,10 +24,11 @@ const Products = () => {
     try {
       // http://localhost/laravel-backend/api/auth/addToCart
       // http://localhost:8080/api/auth/addToCart
+      // http://localhost:8080/api/auth/addToCartViaProductId
 
-      const response = await axios.post("http://localhost:8080/api/auth/addToCartViaProductId",product,{
+      const response = await api.post("auth/addToCart", product, {
         withCredentials: true
-      })
+      });
 
       dispatch(fetchCartCount());
     } catch (error) {
@@ -37,10 +38,10 @@ const Products = () => {
 
   const addProduct = (product) => {
 
-    if(isAuthenticated){
+    if (isAuthenticated) {
       addToCart(product);
     }
-    else{
+    else {
       dispatch(addCart(product));
     }
   };
@@ -51,9 +52,10 @@ const Products = () => {
       // http://localhost/laravel-backend/api/products
 
       // http://localhost:8080/api/auth/products
-      const response = await fetch("http://localhost:8080/api/auth/products");
+      // http://localhost:8080/api/auth/products
+      const response = await api.get("products");
       if (componentMounted) {
-        const result = await response.json();  // Parse the response once
+        const result = response.data;  // Parse the response once
         // setData(result.products);
         setFilter(result.products);
         setLoading(false);
@@ -68,12 +70,14 @@ const Products = () => {
       setLoading(true);
 
       // http://localhost/laravel-backend/api/getAll/categories
+      // http://localhost:8080/api/auth/getAll/categories
 
-      const response = await fetch("http://localhost:8080/api/auth/getAll/categories");
+      const response = await api.get("getAll/categories");
+
 
       if (componentMounted) {
-        const result = await response.json();  // Parse the response once
-        setCategories(result.categories);
+        const result = response.data.categories;  // Parse the response once
+        setCategories(result);
         setLoading(false);
       }
 
@@ -88,12 +92,13 @@ const Products = () => {
 
   }, []);
 
-  const fetchAllProducts = async () =>{
+  const fetchAllProducts = async () => {
     setLoading(true);
 
     // http://localhost/laravel-backend/api/products
+    // http://localhost:8080/api/auth/products
 
-    const response = await fetch("http://localhost:8080/api/auth/products");
+    const response = await api.get("products");
 
     if (componentMounted) {
       const result = await response.json();  // Parse the response once
@@ -106,7 +111,8 @@ const Products = () => {
   const fetchProductsOnCategory = (category_id) => async () => {
     console.log(category_id);
     // http://localhost/laravel-backend/api/products/category/${category_id}
-    const response2 = await fetch(`http://localhost:8080/api/auth/products/category/${category_id}`
+    // http://localhost:8080/api/auth/products/category/${category_id}
+    const response2 = await api.get(`products/category/${category_id}`
     );
 
     const data2 = await response2.json();
@@ -153,17 +159,17 @@ const Products = () => {
       <>
         <div className="buttons text-center py-5">
           {categories.map(category => {
-            if(category.category_name === "all"){
-              return(
-                <button key={category.id}  className="btn btn-outline-dark btn-sm m-2" onClick={fetchAllProducts} >
-                  { category.title_name }
+            if (category.category_name === "all") {
+              return (
+                <button key={category.id} className="btn btn-outline-dark btn-sm m-2" onClick={fetchAllProducts} >
+                  {category.title_name}
                 </button>
               );
             }
-            else{
-              return(
-                <button key={category.id}  className="btn btn-outline-dark btn-sm m-2" onClick={fetchProductsOnCategory(category.id)} >
-                  { category.title_name }
+            else {
+              return (
+                <button key={category.id} className="btn btn-outline-dark btn-sm m-2" onClick={fetchProductsOnCategory(category.id)} >
+                  {category.title_name}
                 </button>
               );
             }

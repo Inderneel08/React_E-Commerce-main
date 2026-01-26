@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Footer, Navbar } from "../components";
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import SHA256 from "crypto-js/sha256";
+import api from '../api/axios';
 
 
 
@@ -50,7 +50,8 @@ const Register = () => {
 
         try {
             // http://localhost/laravel-backend/api/auth/register
-            const response = await axios.post('http://localhost:8080/api/auth/register',{
+            // http://localhost:8080/api/auth/register
+            const response = await api.post('auth/register',{
                 name,
                 email,
                 password: hashedPassword,

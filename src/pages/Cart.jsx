@@ -3,10 +3,11 @@ import { Footer, Navbar } from "../components";
 import { useSelector, useDispatch } from "react-redux";
 import { addCart, delCart } from "../redux/action";
 import { Link, Navigate } from "react-router-dom";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import {load} from '@cashfreepayments/cashfree-js';
+import api from "../api/axios";
+import { getImageUrl } from "../imageUrl/imageUrl";
 
 const Cart = () => {
   const state = useSelector((state) => state.handleCart);
@@ -33,8 +34,8 @@ const Cart = () => {
     try {
       // http://localhost/laravel-backend/api/auth/createOrder
       var formattedSubtotal = Number(subtotal).toFixed(2);
-
-      const response = await axios.post("http://localhost:8080/api/auth/createOrder",{
+      // http://localhost:8080/api/auth/createOrder
+      const response = await api.post("auth/createOrder",{
         "subtotal" : formattedSubtotal,
       },{
         withCredentials: true,
@@ -42,12 +43,12 @@ const Cart = () => {
 
       const data = response.data.data;
 
-      payment_session_id=data;
+      payment_session_id = data.payment_session_id;
 
       if(response.status==200){
         let checkoutOptions = {
           // paymentSessionId: data.payment_session_id,
-          paymentSessionId: data,
+          paymentSessionId: payment_session_id,
           redirectTarget: "_modal",
         }
 
@@ -123,15 +124,16 @@ const Cart = () => {
       }
     }
 
-    try {
-      const response = await axios.post("http://localhost:8080/api/auth/processViaPaymentSessionId",{
-        "paymentSessionId" : payment_session_id,
-      },{
-        withCredentials: true,
-      });
-    } catch (error) {
-      console.error();
-    }
+    // try {
+    //   // http://localhost:8080/api/auth/processViaPaymentSessionId
+    //   const response = await api.post("processPendingOrders",{
+    //     "paymentSessionId" : payment_session_id,
+    //   },{
+    //     withCredentials: true,
+    //   });
+    // } catch (error) {
+    //   console.error();
+    // }
   };
 
   const fetchCartInfo = async () => {
@@ -139,7 +141,8 @@ const Cart = () => {
 
     try {
       // http://localhost/laravel-backend/api/auth/getCartItems
-      const response = await axios.get("http://localhost:8080/api/auth/getCartItems",{
+      // http://localhost:8080/api/auth/getCartItems
+      const response = await api.get("auth/getCartItems",{
         withCredentials:true,
       });
 
@@ -204,8 +207,9 @@ const Cart = () => {
                                 className="bg-image rounded"
                                 data-mdb-ripple-color="light"
                               >
+                                {/* `http://localhost/laravel-backend/public/${item.image}` */}
                                 <img
-                                  src={`http://localhost/laravel-backend/public/${item.image}`}
+                                  src={getImageUrl(item.image)}
                                   alt={item.title}
                                   width={100}
                                   height={75}
@@ -318,7 +322,8 @@ const Cart = () => {
   const addToCart = async (product) => {
     try {
       // http://localhost/laravel-backend/api/auth/addToCart
-      const response = await axios.post("http://localhost:8080/api/auth/addToCart",product,{
+      // http://localhost:8080/api/auth/addToCart
+      const response = await api.post("auth/addToCart",product,{
         withCredentials: true
       })
 
@@ -345,7 +350,8 @@ const Cart = () => {
   const deleteItem = async (product) => {
     try {
       // http://localhost/laravel-backend/api/auth/removeFromCart
-      const response = await axios.post("http://localhost:8080/api/auth/removeFromCart",product,{
+      // http://localhost:8080/api/auth/removeFromCart
+      const response = await api.post("auth/removeFromCart",product,{
         withCredentials: true
       })
 

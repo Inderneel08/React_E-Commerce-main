@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Footer, Navbar } from "../components";
 import { useSelector,useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import Swal from 'sweetalert2';
 import {load} from '@cashfreepayments/cashfree-js';
 import { clearCart } from "../redux/action";
+import api from "../api/axios";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -19,7 +19,8 @@ const Checkout = () => {
     const fetchStates = async () => {
       try {
         // http://localhost/laravel-backend/api/getStates
-        const response = await axios.get("http://localhost:8080/api/auth/getStates");
+        // http://localhost:8080/api/auth/getStates
+        const response = await api.get("getStates");
         setStates(response.data || []);
         // setStates(response.data.states || []);
       } catch (error) {
@@ -65,7 +66,7 @@ const Checkout = () => {
       try {
         event.preventDefault();
 
-        const response = await axios.post("http://localhost/laravel-backend/api/auth/createOrder",{
+        const response = await api.post("auth/createOrder",{
           firstName,
           lastName,
           email,

@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { logoutForm } from '../redux/action' 
-import axios from 'axios'
 import Swal from 'sweetalert2'
 import { clearCart } from '../redux/action'
 import { fetchCartCount } from '../redux/action';
+import api from '../api/axios';
 
 const Navbar = () => {
     const state = useSelector(state => state.handleCart)
@@ -44,7 +44,9 @@ const Navbar = () => {
         const checkAuth = async () =>{
             try {
                 // http://localhost/laravel-backend/api/auth/check
-                const res = await axios.get("http://localhost:8080/api/auth/check", {
+                // http://localhost:8080/api/auth/check
+
+                const res = await api.get("/auth/check", {
                     withCredentials:true
                 });
 
@@ -62,18 +64,19 @@ const Navbar = () => {
             }
         }
 
-        // const processPendingOrders = async () =>{
-        //     try {
-        //         // http://localhost/laravel-backend/api/processPendingOrders
+        const processPendingOrders = async () =>{
+            try {
+                // http://localhost/laravel-backend/api/processPendingOrders
+                // http://localhost:8080/api/auth/processPendingOrders
 
-        //         const response = await axios.get("http://localhost:8080/api/auth/processPendingOrders",{
-        //             withCredentials: true,
-        //         });
+                const response = await api.get("processPendingOrders",{
+                    withCredentials: true,
+                });
 
-        //     } catch (error) {
-        //         console.error();
-        //     }
-        // }
+            } catch (error) {
+                console.error();
+            }
+        }
 
         // const getCartInfo = async () =>{
         //     try {
@@ -96,7 +99,7 @@ const Navbar = () => {
 
         checkAuth();
 
-        // processPendingOrders();
+        processPendingOrders();
 
         dispatch(fetchCartCount());
 
