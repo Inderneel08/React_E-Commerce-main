@@ -4,17 +4,17 @@ import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { logoutForm } from '../redux/action' 
-import axios from 'axios'
 import Swal from 'sweetalert2'
 import { clearCart } from '../redux/action'
 import { fetchCartCount } from '../redux/action';
+import api from '../api/axios';
 
 const Navbar = () => {
     const state = useSelector(state => state.handleCart)
 
     const dispatch = useDispatch();
 
-    const { isAuthenticated, loading } = useSelector((state) => state.auth);
+    const { isAuthenticated, loading, role_user } = useSelector((state) => state.auth);
 
     const {cartCount,cartLoading} = useSelector(state => state.cartCount);
 
@@ -43,7 +43,10 @@ const Navbar = () => {
 
         const checkAuth = async () =>{
             try {
-                const res = await axios.get("http://localhost/laravel-backend/api/auth/check", {
+                // http://localhost/laravel-backend/api/auth/check
+                // http://localhost:8080/api/auth/check
+
+                const res = await api.get("/auth/check", {
                     withCredentials:true
                 });
 
@@ -63,7 +66,10 @@ const Navbar = () => {
 
         const processPendingOrders = async () =>{
             try {
-                const response = await axios.get("http://localhost/laravel-backend/api/processPendingOrders",{
+                // http://localhost/laravel-backend/api/processPendingOrders
+                // http://localhost:8080/api/auth/processPendingOrders
+
+                const response = await api.get("processPendingOrders",{
                     withCredentials: true,
                 });
 
@@ -118,9 +124,14 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/about">About</NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/contact">Contact</NavLink>
-                        </li>
+                        {role_user == 0 ? (
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/contact">Contact</NavLink>
+                            </li>
+                        ):(
+                            null
+                        )}
+
                     </ul>
                     {/* <div className="buttons text-center">
                         {!isAuthenticated?(

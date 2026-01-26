@@ -3,21 +3,24 @@ import { Footer, Navbar } from "../components";
 import { useSelector, useDispatch } from "react-redux";
 import { addCart, delCart } from "../redux/action";
 import { Link, Navigate } from "react-router-dom";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import {load} from '@cashfreepayments/cashfree-js';
+import api from "../api/axios";
+import { getImageUrl } from "../imageUrl/imageUrl";
 
 const Cart = () => {
   const state = useSelector((state) => state.handleCart);
 
-  const isAuthenticated = useSelector((state) => state.auth);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const [cartItems,setCartItems] = useState([]);
 
   const [cartItemsLoading,setCartItemsLoading] = useState(true);
 
   const [totalAmount,setTotalAmount] = useState(0);
+
+  const [subtotal,setSubtotal] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -26,18 +29,26 @@ const Cart = () => {
   const submitForm = async (event) =>{
     event.preventDefault();
 
+    let payment_session_id=null;
+
     try {
-      const response = await axios.post("http://localhost/laravel-backend/api/auth/createOrder",{
-        totalAmount,
+      // http://localhost/laravel-backend/api/auth/createOrder
+      var formattedSubtotal = Number(subtotal).toFixed(2);
+      // http://localhost:8080/api/auth/createOrder
+      const response = await api.post("auth/createOrder",{
+        "subtotal" : formattedSubtotal,
       },{
         withCredentials: true,
       });
 
       const data = response.data.data;
 
+      payment_session_id = data.payment_session_id;
+
       if(response.status==200){
         let checkoutOptions = {
-          paymentSessionId: data.payment_session_id,
+          // paymentSessionId: data.payment_session_id,
+          paymentSessionId: payment_session_id,
           redirectTarget: "_modal",
         }
 
@@ -95,20 +106,43 @@ const Cart = () => {
       }
       else{
 
-        if(error.response.status==402){
+        // if(error.response.status==402){
+        //   Swal.fire({
+        //     title: 'Error',
+        //     text:error.response.data.message,
+        //     icon:'error',
+        //   });
+        // }
+
+        if(error.response.status==400){
           Swal.fire({
             title: 'Error',
-            text:error.response.data.message,
+            text:error.response.data,
             icon:'error',
           });
         }
       }
     }
+
+    // try {
+    //   // http://localhost:8080/api/auth/processViaPaymentSessionId
+    //   const response = await api.post("processPendingOrders",{
+    //     "paymentSessionId" : payment_session_id,
+    //   },{
+    //     withCredentials: true,
+    //   });
+    // } catch (error) {
+    //   console.error();
+    // }
   };
 
   const fetchCartInfo = async () => {
+    var shipping = 30.0;
+
     try {
-      const response = await axios.get("http://localhost/laravel-backend/api/auth/getCartItems",{
+      // http://localhost/laravel-backend/api/auth/getCartItems
+      // http://localhost:8080/api/auth/getCartItems
+      const response = await api.get("auth/getCartItems",{
         withCredentials:true,
       });
 
@@ -118,9 +152,10 @@ const Cart = () => {
 
       setCartItemsLoading(false);
 
-      // console.log(response);
+      setSubtotal(response.data.totalCost+shipping);
+
     } catch (error) {
-      if(error.response.status==401){
+      if(error.response.status==403){
         setCartItemsLoading(false)
       }
 
@@ -150,6 +185,10 @@ const Cart = () => {
           totalItems += item.count;
         });
 
+        // cartItems.forEach(element => {
+        //   console.log(element);
+        // });
+
         return (
           <section className="h-100 gradient-custom">
             <div className="container py-5">
@@ -161,15 +200,16 @@ const Cart = () => {
                     </div>
                     <div className="card-body">
                       {cartItems.map((item) => (
-                        <div key={item.id}>
+                        <div key={item.cartId}>
                           <div className="row d-flex align-items-center">
                             <div className="col-lg-3 col-md-12">
                               <div
                                 className="bg-image rounded"
                                 data-mdb-ripple-color="light"
                               >
+                                {/* `http://localhost/laravel-backend/public/${item.image}` */}
                                 <img
-                                  src={`http://localhost/laravel-backend/public/${item.image}`}
+                                  src={getImageUrl(item.image)}
                                   alt={item.title}
                                   width={100}
                                   height={75}
@@ -275,18 +315,19 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    if(isAuthenticated){
-
-      fetchCartInfo();
-    }
+    fetchCartInfo();
   },[])
 
 
   const addToCart = async (product) => {
     try {
-      const response = await axios.post("http://localhost/laravel-backend/api/auth/addToCart",product,{
+      // http://localhost/laravel-backend/api/auth/addToCart
+      // http://localhost:8080/api/auth/addToCart
+      const response = await api.post("auth/addToCart",product,{
         withCredentials: true
       })
+
+      setSubtotal(parseFloat(subtotal) + parseFloat(product.price));
 
     } catch (error) {
       console.error();
@@ -308,9 +349,13 @@ const Cart = () => {
 
   const deleteItem = async (product) => {
     try {
-      const response = await axios.post("http://localhost/laravel-backend/api/auth/removeFromCart",product,{
+      // http://localhost/laravel-backend/api/auth/removeFromCart
+      // http://localhost:8080/api/auth/removeFromCart
+      const response = await api.post("auth/removeFromCart",product,{
         withCredentials: true
       })
+
+      setSubtotal(parseFloat(subtotal) - parseFloat(product.price));
 
     } catch (error) {
       console.error();

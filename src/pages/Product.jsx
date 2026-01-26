@@ -5,8 +5,8 @@ import Marquee from "react-fast-marquee";
 import { useDispatch,useSelector } from "react-redux";
 import { addCart } from "../redux/action";
 import { Footer, Navbar } from "../components";
-import axios from "axios";
 import { fetchCartCount } from "../redux/action";
+import api from "../api/axios";
 
 const Product = () => {
   const { id } = useParams();
@@ -19,7 +19,11 @@ const Product = () => {
 
   const addToCart = async (product) => {
     try {
-      const response = await axios.post("http://localhost/laravel-backend/api/auth/addToCart",product,{
+      // http://localhost/laravel-backend/api/auth/addToCart
+      // http://localhost:8080/api/auth/addToCart
+      // http://localhost:8080/api/auth/addToCartViaProductId
+
+      const response = await api.post("auth/addToCart",product,{
         withCredentials: true
       })
 
@@ -57,12 +61,17 @@ const Product = () => {
     const getProduct = async () => {
       setLoading(true);
       setLoading2(true);
-      const response = await fetch(`http://localhost/laravel-backend/api/products/${id}`);
+      // http://localhost/laravel-backend/api/products/${id}
+      // http://localhost:8080/api/auth/products/${id}
+      const response = await api.get(`products/${id}`);
       const data = await response.json();
-      setProduct(data.productInfo);
+      // setProduct(data.productInfo);
+      setProduct(data.productInfo[0]);
       setLoading(false);
-      const response2 = await fetch(
-        `http://localhost/laravel-backend/api/products/category/${data.productInfo.category_id}`
+      // http://localhost/laravel-backend/api/products/category/${data.productInfo.category_id}
+      // http://localhost:8080/api/auth/products/category/${data.productInfo[0].category_id}
+      const response2 = await api.get(
+        `products/category/${data.productInfo.category_id}`
       );
       const data2 = await response2.json();
       setSimilarProducts(data2.productInfoCategory);

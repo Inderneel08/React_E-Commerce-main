@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import api from "../api/axios";
 
 const ProfileData = () => {
   const [states, setStates] = useState([]);
@@ -16,8 +16,11 @@ const ProfileData = () => {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const response = await axios.get("http://localhost/laravel-backend/api/getStates");
-        setStates(response.data.states || []);
+        // http://localhost/laravel-backend/api/getStates
+        //   http://localhost:8080/api/auth/getStates
+        const response = await api.get("getStates");
+        setStates(response.data || []);
+        // setStates(response.data.states || []);
       } catch (error) {
         console.error("Failed to fetch states:", error);
       }
@@ -36,11 +39,14 @@ const ProfileData = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
-            const response = await axios.get("http://localhost/laravel-backend/api/auth/findProfileInfo", {
+            // http://localhost/laravel-backend/api/auth/findProfileInfo
+            // http://localhost:8080/api/auth/findProfileInfo
+            const response = await api.get("auth/findProfileInfo", {
                 withCredentials:true
             });
 
-            setProfileData(response.data.profileInfo || {});
+            setProfileData(response.data || {});
+            // setProfileData(response.data.profileInfo || {});
         } catch (error) {
             console.error("Failed to fetch data", error);
         }
@@ -52,8 +58,8 @@ const ProfileData = () => {
 
     const updateProfileInfo = async (event) =>{
         event.preventDefault();
-
-        const response = await axios.post("http://localhost/laravel-backend/api/auth/updateProfile", {
+        // http://localhost/laravel-backend/api/auth/updateProfile
+        const response = await api.post("updateProfile", {
             profileData
         },{
             withCredentials:true

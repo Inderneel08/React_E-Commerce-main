@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../api/axios";
 
 // For Add Item to Cart
 export const addCart = (product) =>{
@@ -10,7 +10,11 @@ export const addCart = (product) =>{
 
 export const fetchCartCount = () => async (dispatch) => {
   try {
-    const response = await axios.get("http://localhost/laravel-backend/api/auth/getCartInfo", {
+
+    // http://localhost/laravel-backend/api/auth/getCartInfo
+    //   http://localhost:8080/api/auth/getCartInfo
+
+    const response = await api.get("auth/getCartInfo", {
       withCredentials: true
     });
 
@@ -43,26 +47,34 @@ export const delCart = (product) =>{
 export const submitLoginForm = (email,password) => async(dispatch) => {
 
     try {
-        const response = await axios.post("http://localhost/laravel-backend/api/auth/login", {
+        // http://localhost/laravel-backend/api/auth/login
+        // http://localhost:8080/api/auth/login
+        const response = await api.post("auth/login", {
             email,
             password
         }, {
             withCredentials: true
         });
 
+        // console.log(response);
+
         dispatch({
             type: "LOGIN_SUCCESS",
-            payload: response.data, // Assuming API returns user data
+            payload: response.data.message, // Assuming API returns user data
         });
 
         return([response.data.message,response.status]);
+
+        // return([response.data.message,response.status]);
     } catch (error) {
         dispatch({
             type: "LOGIN_FAILURE",
             payload: error.response.data, // Assuming API returns user data
         });
 
-        return([error.response.data.message,error.response.status]);
+        return([error.response.data,error.response.status]);
+
+        // return([error.response.data.message,error.response.status]);
     }
 
 }
@@ -70,16 +82,19 @@ export const submitLoginForm = (email,password) => async(dispatch) => {
 
 export const logoutForm = () => async(dispatch) =>{
     try {
-        const response = await axios.post("http://localhost/laravel-backend/api/auth/logout",{},{
+        // http://localhost/laravel-backend/api/auth/logout
+        const response = await api.post("auth/logout",{},{
             withCredentials:true
         });
 
         dispatch({
             type: "LOGIN_FAILURE",
-            payload: response.data, // Assuming API returns user data
+            payload: response.data.message, // Assuming API returns user data
         });
 
-        return([response.data.message,response.status]);
+        return ([response.data.message,response.status]);
+
+        // return([response.data.message,response.status]);
     } catch (error) {
         dispatch({
             type: "LOGIN_FAILURE",

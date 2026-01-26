@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import SHA256 from "crypto-js/sha256";
+import api from "../api/axios";
 
 const Password = () => {
   const [formData, setFormData] = useState({
@@ -49,7 +50,9 @@ const Password = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost/laravel-backend/api/auth/updatePassword", hashedPayload, {
+      // http://localhost/laravel-backend/api/auth/updatePassword
+      // http://localhost:8080/api/auth/updatePassword
+      const response = await api.post("/auth/updatePassword", hashedPayload, {
         withCredentials: true
       });
 

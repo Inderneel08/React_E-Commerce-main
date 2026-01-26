@@ -22,6 +22,7 @@ import {
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
 import ChangePassword from "./pages/ChangePassword";
+import ContactRequests from "./pages/ContactRequests";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -36,6 +37,7 @@ root.render(
           <Route path="/changePassword" element={< ChangePassword/>}></Route>
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/contact-requests" element={<ContactRequests />}></Route>
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
