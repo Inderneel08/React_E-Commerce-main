@@ -5,7 +5,7 @@ import { addCart, delCart } from "../redux/action";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import {load} from '@cashfreepayments/cashfree-js';
+import { load } from '@cashfreepayments/cashfree-js';
 import api from "../api/axios";
 import { getImageUrl } from "../imageUrl/imageUrl";
 
@@ -14,30 +14,30 @@ const Cart = () => {
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  const [cartItems,setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
 
-  const [cartItemsLoading,setCartItemsLoading] = useState(true);
+  const [cartItemsLoading, setCartItemsLoading] = useState(true);
 
-  const [totalAmount,setTotalAmount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-  const [subtotal,setSubtotal] = useState(0);
+  const [subtotal, setSubtotal] = useState(0);
 
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
-  const submitForm = async (event) =>{
+  const submitForm = async (event) => {
     event.preventDefault();
 
-    let payment_session_id=null;
+    let payment_session_id = null;
 
     try {
       // http://localhost/laravel-backend/api/auth/createOrder
       var formattedSubtotal = Number(subtotal).toFixed(2);
       // http://localhost:8080/api/auth/createOrder
-      const response = await api.post("auth/createOrder",{
-        "subtotal" : formattedSubtotal,
-      },{
+      const response = await api.post("auth/createOrder", {
+        "subtotal": formattedSubtotal,
+      }, {
         withCredentials: true,
       });
 
@@ -45,7 +45,7 @@ const Cart = () => {
 
       payment_session_id = data.payment_session_id;
 
-      if(response.status==200){
+      if (response.status == 200) {
         let checkoutOptions = {
           // paymentSessionId: data.payment_session_id,
           paymentSessionId: payment_session_id,
@@ -53,58 +53,58 @@ const Cart = () => {
         }
 
         const cashfree = await load({
-          mode:"sandbox"
+          mode: "sandbox"
         });
 
-          try {
-            const result = await cashfree.checkout(checkoutOptions);
+        try {
+          const result = await cashfree.checkout(checkoutOptions);
 
-            if (result.error) {
-              // Swal.fire({
-              //   title:"Error",
-              //   icon:"error",
-              //   text:"Error in processing the payment",
-              //   didClose: () => {
-              //     navigate("/");
-              //   }
-              // });
+          if (result.error) {
+            // Swal.fire({
+            //   title:"Error",
+            //   icon:"error",
+            //   text:"Error in processing the payment",
+            //   didClose: () => {
+            //     navigate("/");
+            //   }
+            // });
 
-              console.log("User has closed the popup or there is some payment error, Check for Payment Status");
-              console.log(result.error);
-            } else if (result.redirect) {
-              console.log("Payment will be redirected");
-            } else if (result.paymentDetails) {
-              console.log("Payment has been completed, Check for Payment Status");
+            console.log("User has closed the popup or there is some payment error, Check for Payment Status");
+            console.log(result.error);
+          } else if (result.redirect) {
+            console.log("Payment will be redirected");
+          } else if (result.paymentDetails) {
+            console.log("Payment has been completed, Check for Payment Status");
 
-              Swal.fire({
-                title:"Success",
-                icon:"success",
-                text:"Payment has been processed",
-                didClose: () => {
-                  navigate("/");
-                }
-              });
+            Swal.fire({
+              title: "Success",
+              icon: "success",
+              text: "Payment has been processed",
+              didClose: () => {
+                navigate("/");
+              }
+            });
 
-              console.log(result.paymentDetails.paymentMessage);
-            }
+            console.log(result.paymentDetails.paymentMessage);
+          }
         } catch (checkoutError) {
           console.error("Checkout process failed: ", checkoutError);
         }
       }
-      else{
+      else {
         Swal.fire({
           title: 'Error',
-          text:'Error',
-          icon:'error',
+          text: 'Error',
+          icon: 'error',
         });
       }
 
     } catch (error) {
 
-      if(error.status==302){
+      if (error.status == 302) {
         navigate('/profile');
       }
-      else{
+      else {
 
         // if(error.response.status==402){
         //   Swal.fire({
@@ -114,11 +114,11 @@ const Cart = () => {
         //   });
         // }
 
-        if(error.response.status==400){
+        if (error.response.status == 400) {
           Swal.fire({
             title: 'Error',
-            text:error.response.data,
-            icon:'error',
+            text: error.response.data,
+            icon: 'error',
           });
         }
       }
@@ -142,8 +142,8 @@ const Cart = () => {
     try {
       // http://localhost/laravel-backend/api/auth/getCartItems
       // http://localhost:8080/api/auth/getCartItems
-      const response = await api.get("auth/getCartItems",{
-        withCredentials:true,
+      const response = await api.get("auth/getCartItems", {
+        withCredentials: true,
       });
 
       setCartItems(response.data.cartItems);
@@ -152,10 +152,10 @@ const Cart = () => {
 
       setCartItemsLoading(false);
 
-      setSubtotal(response.data.totalCost+shipping);
+      setSubtotal(response.data.totalCost + shipping);
 
     } catch (error) {
-      if(error.response.status==403){
+      if (error.response.status == 403 || error.response.status == 401) {
         setCartItemsLoading(false)
       }
 
@@ -165,16 +165,16 @@ const Cart = () => {
 
   const EmptyCart = () => {
 
-    if(cartItemsLoading){
-        return(
-          <>
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </>
-        );
+    if (cartItemsLoading) {
+      return (
+        <>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </>
+      );
     }
-    else{
+    else {
       if (isAuthenticated && cartItems.length > 0) {
         // let subtotal = 0;
         let shipping = 30.0;
@@ -297,16 +297,16 @@ const Cart = () => {
           </section>
         );
       }
-      else{
+      else {
         return (
-            <div className="container">
-              <div className="row">
-                <div className="col-md-12 py-5 bg-light text-center">
-                  <h4 className="p-3 display-5">Your Cart is Empty</h4>
-                  <Link to="/" className="btn  btn-outline-dark mx-4">
-                    <i className="fa fa-arrow-left"></i> Continue Shopping
-                  </Link>
-                </div>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12 py-5 bg-light text-center">
+                <h4 className="p-3 display-5">Your Cart is Empty</h4>
+                <Link to="/" className="btn  btn-outline-dark mx-4">
+                  <i className="fa fa-arrow-left"></i> Continue Shopping
+                </Link>
+              </div>
             </div>
           </div>
         );
@@ -316,14 +316,14 @@ const Cart = () => {
 
   useEffect(() => {
     fetchCartInfo();
-  },[])
+  }, [])
 
 
   const addToCart = async (product) => {
     try {
       // http://localhost/laravel-backend/api/auth/addToCart
       // http://localhost:8080/api/auth/addToCart
-      const response = await api.post("auth/addToCart",product,{
+      const response = await api.post("auth/addToCart", product, {
         withCredentials: true
       })
 
@@ -337,12 +337,12 @@ const Cart = () => {
 
   const addItem = async (product) => {
 
-    if(isAuthenticated){
+    if (isAuthenticated) {
       setCartItemsLoading(true);
       await addToCart(product); // Wait for it to finish first
       await fetchCartInfo();    // Then refetch updated cart
     }
-    else{
+    else {
       dispatch(addCart(product));
     }
   };
@@ -351,7 +351,7 @@ const Cart = () => {
     try {
       // http://localhost/laravel-backend/api/auth/removeFromCart
       // http://localhost:8080/api/auth/removeFromCart
-      const response = await api.post("auth/removeFromCart",product,{
+      const response = await api.post("auth/removeFromCart", product, {
         withCredentials: true
       })
 
@@ -363,12 +363,12 @@ const Cart = () => {
   }
 
   const removeItem = async (product) => {
-    if(isAuthenticated){
+    if (isAuthenticated) {
       setCartItemsLoading(true);
       await deleteItem(product);
       await fetchCartInfo();
     }
-    else{
+    else {
       dispatch(delCart(product));
     }
   };

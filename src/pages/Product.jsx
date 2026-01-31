@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import { Link, useParams,useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Marquee from "react-fast-marquee";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "../redux/action";
 import { Footer, Navbar } from "../components";
 import { fetchCartCount } from "../redux/action";
@@ -23,7 +23,7 @@ const Product = () => {
       // http://localhost:8080/api/auth/addToCart
       // http://localhost:8080/api/auth/addToCartViaProductId
 
-      const response = await api.post("auth/addToCart",product,{
+      const response = await api.post("auth/addToCart", product, {
         withCredentials: true
       })
 
@@ -40,11 +40,11 @@ const Product = () => {
 
 
   const addProduct = (product) => {
-    product.id=product.product_id;
+    product.id = product.product_id;
 
     delete product.product_id;
 
-    if(isAuthenticated){
+    if (isAuthenticated) {
 
       // dispatch({
       //   type:"RESET_CART",
@@ -52,7 +52,7 @@ const Product = () => {
 
       addToCart(product);
     }
-    else{
+    else {
       dispatch(addCart(product));
     }
   };
@@ -64,17 +64,17 @@ const Product = () => {
       // http://localhost/laravel-backend/api/products/${id}
       // http://localhost:8080/api/auth/products/${id}
       const response = await api.get(`products/${id}`);
-      const data = await response.json();
+      let data = response;
       // setProduct(data.productInfo);
-      setProduct(data.productInfo[0]);
+      setProduct(data.data.productInfo);
       setLoading(false);
       // http://localhost/laravel-backend/api/products/category/${data.productInfo.category_id}
       // http://localhost:8080/api/auth/products/category/${data.productInfo[0].category_id}
       const response2 = await api.get(
-        `products/category/${data.productInfo.category_id}`
+        `products/category/${data.data.productInfo.category_id}`
       );
-      const data2 = await response2.json();
-      setSimilarProducts(data2.productInfoCategory);
+      const data2 = response2;
+      setSimilarProducts(data2.data.productInfoCategory);
       setLoading2(false);
     };
     getProduct();
@@ -217,7 +217,7 @@ const Product = () => {
         <div className="row">{loading ? <Loading /> : <ShowProduct />}</div>
         <div className="row my-5 py-5">
           <div className="d-none d-md-block">
-          <h2 className="">You may also Like</h2>
+            <h2 className="">You may also Like</h2>
             <Marquee
               pauseOnHover={true}
               pauseOnClick={true}

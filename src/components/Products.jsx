@@ -101,7 +101,7 @@ const Products = () => {
     const response = await api.get("products");
 
     if (componentMounted) {
-      const result = await response.json();  // Parse the response once
+      const result = response.data;  // Parse the response once
       // setData(result.products);
       setFilter(result.products);
       setLoading(false);
@@ -115,9 +115,9 @@ const Products = () => {
     const response2 = await api.get(`products/category/${category_id}`
     );
 
-    const data2 = await response2.json();
+    let data2 = response2;
 
-    setFilter(data2.productInfoCategory);
+    setFilter(data2.data.productInfoCategory);
   }
 
 
