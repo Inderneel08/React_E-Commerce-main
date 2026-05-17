@@ -50,6 +50,8 @@ const Navbar = () => {
                     withCredentials:true
                 });
 
+                console.log(res);
+
                 dispatch({
                     type: "LOGIN_SUCCESS",
                     payload: res.data, // Assuming API returns user data

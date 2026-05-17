@@ -40,9 +40,9 @@ const Product = () => {
 
 
   const addProduct = (product) => {
-    product.id = product.product_id;
+    // product.id = product.product_id;
 
-    delete product.product_id;
+    // delete product.product_id;
 
     if (isAuthenticated) {
 
@@ -71,7 +71,7 @@ const Product = () => {
       // http://localhost/laravel-backend/api/products/category/${data.productInfo.category_id}
       // http://localhost:8080/api/auth/products/category/${data.productInfo[0].category_id}
       const response2 = await api.get(
-        `products/category/${data.data.productInfo.category_id}`
+        `products/category/${data.data.productInfo.category_id}/${id}`
       );
       const data2 = response2;
       setSimilarProducts(data2.data.productInfoCategory);

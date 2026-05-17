@@ -19,7 +19,7 @@ const ProfileData = () => {
         // http://localhost/laravel-backend/api/getStates
         //   http://localhost:8080/api/auth/getStates
         const response = await api.get("getStates");
-        setStates(response.data || []);
+        setStates(response.data.states || []);
         // setStates(response.data.states || []);
       } catch (error) {
         console.error("Failed to fetch states:", error);
@@ -45,7 +45,7 @@ const ProfileData = () => {
                 withCredentials:true
             });
 
-            setProfileData(response.data || {});
+            setProfileData(response.data.profileInfo || {});
             // setProfileData(response.data.profileInfo || {});
         } catch (error) {
             console.error("Failed to fetch data", error);

@@ -1,17 +1,17 @@
 const initialState = {
-  email: null,
   isAuthenticated: false,
+  token: null,
   loading: true,
   role_user: false,
 };
 
 
 const authReducer = (state = initialState, action) => {
+    console.log(action);
     switch(action.type){
         case "LOGIN_SUCCESS":
             return{
                 ...state,
-                email: action.payload.email,
                 isAuthenticated: true,
                 loading: false,
                 role_user:action.payload.role,
@@ -20,7 +20,6 @@ const authReducer = (state = initialState, action) => {
         case "LOGIN_FAILURE":
             return{
                 ...state,
-                email: null,
                 isAuthenticated: false,
                 loading: false,
                 role_user: false,
@@ -29,7 +28,6 @@ const authReducer = (state = initialState, action) => {
         case "TOKEN_EXPIRED":
             return{
                 ...state,
-                email: null,
                 isAuthenticated: false,
                 loading: false,
                 role_user: false,

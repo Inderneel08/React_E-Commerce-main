@@ -56,7 +56,7 @@ export const submitLoginForm = (email,password) => async(dispatch) => {
             withCredentials: true
         });
 
-        // console.log(response);
+        console.log(response);
 
         dispatch({
             type: "LOGIN_SUCCESS",

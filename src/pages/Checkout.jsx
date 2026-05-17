@@ -1,10 +1,10 @@
 // Keep this part the same
 import React, { useEffect, useState } from "react";
 import { Footer, Navbar } from "../components";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from 'sweetalert2';
-import {load} from '@cashfreepayments/cashfree-js';
+import { load } from '@cashfreepayments/cashfree-js';
 import { clearCart } from "../redux/action";
 import api from "../api/axios";
 
@@ -21,7 +21,7 @@ const Checkout = () => {
         // http://localhost/laravel-backend/api/getStates
         // http://localhost:8080/api/auth/getStates
         const response = await api.get("getStates");
-        setStates(response.data || []);
+        setStates(response.data.states || []);
         // setStates(response.data.states || []);
       } catch (error) {
         console.error("Failed to fetch states:", error);
@@ -52,21 +52,21 @@ const Checkout = () => {
     const [address, setAddress] = useState("");
     const [address2, setAddress2] = useState("");
     const [zip, setZip] = useState("");
-    const [phone,setPhone] = useState("");
+    const [phone, setPhone] = useState("");
 
     useEffect(() => {
-      if(firstName!="" && lastName!="" && email!="" && address!="" && zip!=""){
-        document.getElementById('checkoutSubmit').disabled=false;
+      if (firstName != "" && lastName != "" && email != "" && address != "" && zip != "") {
+        document.getElementById('checkoutSubmit').disabled = false;
       }
 
-    },[firstName,lastName,email,address,address2,zip]);
+    }, [firstName, lastName, email, address, address2, zip]);
 
 
     const submitCheckoutForm = async (event) => {
       try {
         event.preventDefault();
 
-        const response = await api.post("auth/createOrder",{
+        const response = await api.post("auth/createOrder", {
           firstName,
           lastName,
           email,
@@ -77,44 +77,44 @@ const Checkout = () => {
           phone,
           subtotal,
           state,
-        },{
+        }, {
           withCredentials: true,
         });
 
         const data = response.data.data;
 
-        if(response.status==200){
+        if (response.status == 200) {
           let checkoutOptions = {
             paymentSessionId: data.payment_session_id,
             redirectTarget: "_modal",
           }
 
           const cashfree = await load({
-            mode:"sandbox"
+            mode: "sandbox"
           });
 
-            try {
-              const result = await cashfree.checkout(checkoutOptions);
+          try {
+            const result = await cashfree.checkout(checkoutOptions);
 
-              if (result.error) {
-                console.log("User has closed the popup or there is some payment error, Check for Payment Status");
-                console.log(result.error);
-              } else if (result.redirect) {
-                console.log("Payment will be redirected");
-              } else if (result.paymentDetails) {
-                console.log("Payment has been completed, Check for Payment Status");
-                console.log(result.paymentDetails.paymentMessage);
-                dispatch(clearCart());
-              }
+            if (result.error) {
+              console.log("User has closed the popup or there is some payment error, Check for Payment Status");
+              console.log(result.error);
+            } else if (result.redirect) {
+              console.log("Payment will be redirected");
+            } else if (result.paymentDetails) {
+              console.log("Payment has been completed, Check for Payment Status");
+              console.log(result.paymentDetails.paymentMessage);
+              dispatch(clearCart());
+            }
           } catch (checkoutError) {
             console.error("Checkout process failed: ", checkoutError);
           }
         }
-        else{
+        else {
           Swal.fire({
             title: 'Error',
-            text:'Error',
-            icon:'error',
+            text: 'Error',
+            icon: 'error',
           });
         }
 
@@ -123,18 +123,18 @@ const Checkout = () => {
 
         Swal.fire({
           title: 'Error',
-          text:'Error',
-          icon:'error',
+          text: 'Error',
+          icon: 'error',
         });
       }
     }
 
     const shipping = 30.0;
 
-    const [subtotalCalc,subtotal, totalItems] = React.useMemo(() => {
+    const [subtotalCalc, subtotal, totalItems] = React.useMemo(() => {
       const subtotalCalc = state.reduce((acc, item) => acc + item.price * item.qty, 0);
       const itemsCount = state.reduce((acc, item) => acc + item.qty, 0);
-      return [subtotalCalc,subtotalCalc+shipping, itemsCount];
+      return [subtotalCalc, subtotalCalc + shipping, itemsCount];
     }, [state]);
 
 
